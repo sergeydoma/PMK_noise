@@ -82,6 +82,8 @@ int16_t blink; // для выбора режима упрвления миган
 		uint32_t noise_rz1[10];
 		uint32_t noise_rz2[10];
 		
+		_Bool EON_off; // смещение 100 В отключено
+		
 		_Bool stMbAdd[2];
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -501,7 +503,7 @@ int main(void)
 		for(adc_current=0; adc_current<11; adc_current++) 
 		{
 			
-			HAL_IWDG_Refresh(&hiwdg);
+			HAL_IWDG_Refresh(&hiwdg); // сторожевой таймер
 			
 			if (adc_current < 10)
 			{
@@ -520,12 +522,12 @@ int main(void)
 				ADC_reset();
 				if (startSett) // запуск прошел
 				{
-					if(arrWord[adc_current+40]==0)
+					if(arrWord[adc_current+40]==0) // режим работы канала 0
 						{
-							arrBool[adc_current+20]=1;
+							arrBool[adc_current+20]=1; // сопротивление канала в норме
 							arrBool[adc_current+30]=1;
 							arrBool[adc_current+40]=1;
-							arrBool[adc_current+50]=1;
+							arrBool[adc_current+50]=1; // состояние кабеля в норме
 							
 //							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 //							set_set[adc_current] = 1;
@@ -534,7 +536,15 @@ int main(void)
 						{
 
 							// if mode chanall == 2
-							ADC_measure(adc_current, arrWord, arrBool, startSett, noise_rz1, noise_rz2);						
+									if(EON_off)
+									{
+										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);								
+									}
+									else
+									{
+										ADC_measure(adc_current, arrWord, arrBool, startSett, noise_rz1, noise_rz2);
+									}
+													
 						}
 						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
 						{
@@ -546,10 +556,16 @@ int main(void)
 							//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
 						}
 				}
-				else
+				else // идет запуск
 				{
-					
-				ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
+					if(EON_off)
+									{
+										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);								
+									}
+									else
+									{
+										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
+									}			
 				}
 				ADC_CS(-1);
 			}
