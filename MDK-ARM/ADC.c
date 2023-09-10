@@ -132,7 +132,7 @@ uint32_t ADC_read(uint32_t n, uint32_t delay)
 }
 ///******************************************************
 
-	void ADC_measure(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool, _Bool calibrate) 
+	void ADC_measure(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool, _Bool calibrate, uint32_t* noise_1, uint32_t* noise_2) 
 	{
 	extern uint32_t adc_delay;
 	uint32_t n = 16;//16;
@@ -253,7 +253,7 @@ arrWord[70 + nCh] = R; // измеренное значение
 		arrWord[221] &= ~ (1<<nCh);
 	}
 	
-
+ // сопротивление изоляции 1
 	
 	ADC_set_config(0x1050); //0x1050) смещение внешнее REFin2+ REFin2- буфер канал 1 
 	HAL_Delay(adc_delay);		
@@ -276,7 +276,16 @@ arrWord[70 + nCh] = R; // измеренное значение
 	ADC_read(1, adc_delay); // buffer flush	
 	ADC_read(1, adc_delay); // buffer flush
 	s = ADC_read(n, adc_delay);
-
+	//20230910
+	
+	if((s - *noise_1)>=0)
+	{
+		s = s -  *noise_1; 
+	}
+	else
+	{
+		s = *noise_1 - s;
+	}
 	
 	
 	//led_rgb[adc_current_chan] = 0x1f;
@@ -344,6 +353,16 @@ R = R/16;
 	ADC_read(1, adc_delay); // buffer flush
 	ADC_read(1, adc_delay); // buffer flush
 	s = ADC_read(n, adc_delay);
+	// 20230910
+	
+	if((s - *noise_2)>=0)
+	{
+		s = s -  *noise_2; 
+	}
+	else
+	{
+		s = *noise_2 - s;
+	}
 
 	//led_rgb[adc_current_chan] = 0x1f;
 //	R = 20000.0; //RR
