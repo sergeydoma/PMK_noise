@@ -672,6 +672,8 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff)
 	static int ii = 0;
 	_Bool out;
 	
+	out = 0;
+	
 	if (EONoff)
 	{
 		E_off |= controlEon(nCh);
@@ -688,7 +690,7 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff)
 			if (ii == 10 & E_off==1)
 			{
 				ii=0;
-				out = 0;
+				out = 2;
 			}
 				
 		}
