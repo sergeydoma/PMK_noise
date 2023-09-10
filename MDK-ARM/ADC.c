@@ -278,13 +278,13 @@ arrWord[70 + nCh] = R; // измеренное значение
 	s = ADC_read(n, adc_delay);
 	//20230910
 	
-	if((s - *noise_1)>=0)
+	if((s - noise_1[nCh])>=0)
 	{
-		s = s -  *noise_1; 
+		s = s - noise_1[nCh]; 
 	}
 	else
 	{
-		s = *noise_1 - s;
+		s = noise_1[nCh] - s;
 	}
 	
 	
@@ -355,13 +355,13 @@ R = R/16;
 	s = ADC_read(n, adc_delay);
 	// 20230910
 	
-	if((s - *noise_2)>=0)
+	if((s - noise_2[nCh])>=0)
 	{
-		s = s -  *noise_2; 
+		s = s - noise_2[nCh]; 
 	}
 	else
 	{
-		s = *noise_2 - s;
+		s = noise_2[nCh] - s;
 	}
 
 	//led_rgb[adc_current_chan] = 0x1f;
@@ -594,7 +594,7 @@ arrSetpoint[30 + nCh] = R; // Уставка обрезанная снизу
 //	R=R+569;
 }
 	
-void ADC_measure_noise(uint32_t* noise_1, uint32_t* noise_2)
+void ADC_measure_noise(uint8_t nCh, uint32_t* noise_1, uint32_t* noise_2)
 {
 	extern uint32_t adc_delay;
 	uint32_t n = 16;//16; // колличество измерений
@@ -614,7 +614,7 @@ void ADC_measure_noise(uint32_t* noise_1, uint32_t* noise_2)
 
 	ADC_read(1, adc_delay); // buffer flush	
 	ADC_read(1, adc_delay); // buffer flush
-	*noise_1 = ADC_read(n, adc_delay);
+	noise_1[nCh] = ADC_read(n, adc_delay);
 	// Сопротивление изоляции 2 измерение шумов
 	
 	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 2 
@@ -629,6 +629,6 @@ void ADC_measure_noise(uint32_t* noise_1, uint32_t* noise_2)
 
 	ADC_read(1, adc_delay); // buffer flush
 	ADC_read(1, adc_delay); // buffer flush
-	*noise_2 = ADC_read(n, adc_delay);
+	noise_2[nCh] = ADC_read(n, adc_delay);
 }
 	
