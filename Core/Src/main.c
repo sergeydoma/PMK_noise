@@ -82,9 +82,9 @@ int16_t blink; // для выбора режима упрвления миган
 		uint32_t noise_rz1[10];
 		uint32_t noise_rz2[10];
 		
-		_Bool EON_off; // смещение 100 В отключено
+		_Bool EON_off = 1; // смещение 100 В отключено
 		uint8_t EON_mode = 0;
-		
+		int EON_curr = 0;
 		_Bool stMbAdd[2];
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -539,11 +539,24 @@ int main(void)
 							
 									if (EON_mode == 1)
 									{
+										EON_curr++;
+										
 										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+										if (EON_curr == 10) // не понятно с какого значения это все будет считаться????
+										{
+											EON_curr = 0;
+											EON_off = 0;
+										}
 									}
 									else if (EON_mode == 2)
 									{
-										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+										EON_curr++;
+										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
+										if (EON_curr==10)
+										{
+											EON_curr =0;
+											EON_off = 1;
+										}
 									}
 									
 							// if mode chanall == 2
@@ -562,18 +575,44 @@ int main(void)
 				}
 				else // идет запуск
 				{
-					if(EON_off)
+					
+						EON_mode = EONmode(adc_current, EON_off); // функция срабатывает на 10 вызове
+							
+									if (EON_mode == 1)
 									{
-										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);								
+										EON_curr++;
+										
+										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+										if (EON_curr == 10) // 
+										{
+											EON_curr = 0;
+											EON_off = 0;
+										}
 									}
-									else
+									else if (EON_mode == 2)
 									{
+										EON_curr++;
 										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
-									}			
+										if (EON_curr==10)
+										{
+											EON_curr =0;
+											EON_off = 1;
+										}
+									}
+					
+					
+//					if(EON_off)
+//									{
+//										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);								
+//									}
+//									else
+//									{
+//										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
+//									}			
 				}
 				ADC_CS(-1);
 			}
-			else if ((adc_current ==10)& (startSett==0))
+			else if ((adc_current == 10)& (startSett == 0)& EON_off == 0 )// может быть не так?
 			{
 				startSett = 1;
 			}
