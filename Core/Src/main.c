@@ -77,6 +77,11 @@ int16_t blink; // для выбора режима упрвления миган
 		uint32_t rlanTest;
 		_Bool blanTest;
 		
+		// корректировка шумов
+		
+		uint32_t noise_rz1[10];
+		uint32_t noise_rz2[10];
+		
 		_Bool stMbAdd[2];
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -529,7 +534,7 @@ int main(void)
 						{
 
 							// if mode chanall == 2
-							ADC_measure(adc_current, arrWord, arrBool, startSett);						
+							ADC_measure(adc_current, arrWord, arrBool, startSett, noise_rz1, noise_rz2);						
 						}
 						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
 						{
@@ -544,7 +549,7 @@ int main(void)
 				else
 				{
 					
-				ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+				ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
 				}
 				ADC_CS(-1);
 			}
