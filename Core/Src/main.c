@@ -1663,6 +1663,7 @@ void Error_Handler(void)
   * @retval None
   */
 //test
+// test 2
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
