@@ -83,6 +83,7 @@ int16_t blink; // для выбора режима упрвления миган
 		uint32_t noise_rz2[10];
 		
 		_Bool EON_off; // смещение 100 В отключено
+		uint8_t EON_mode = 0;
 		
 		_Bool stMbAdd[2];
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
@@ -518,7 +519,7 @@ int main(void)
 				
 				
 				
-				ADC_CS(adc_current);
+				ADC_CS(adc_current); // подключаем АЦП по счетчику
 				ADC_reset();
 				if (startSett) // запуск прошел
 				{
@@ -532,18 +533,21 @@ int main(void)
 //							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 //							set_set[adc_current] = 1;
 						}
-						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
+						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) ) // канал в режиме измерения
 						{
-
+							EON_mode = EONmode(adc_current, EON_off); // функция срабатывает на 10 вызове
+							
+									if (EON_mode == 1)
+									{
+										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+									}
+									else if (EON_mode == 2)
+									{
+										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+									}
+									
 							// if mode chanall == 2
-									if(EON_off)
-									{
-										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);								
-									}
-									else
-									{
-										ADC_measure(adc_current, arrWord, arrBool, startSett, noise_rz1, noise_rz2);
-									}
+									
 													
 						}
 						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
