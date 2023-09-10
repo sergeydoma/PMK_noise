@@ -665,4 +665,35 @@ _Bool controlEon(uint8_t nCh)
 	}
 
 }
+uint8_t EONmode(uint8_t nCh, _Bool EONoff)
+{
+
+	static _Bool E_off;
+	static int ii = 0;
+	_Bool out;
+	
+	if (EONoff)
+	{
+		E_off |= controlEon(nCh);
+		ii ++;
+		if (ii == 10 & E_off == 0)
+		{
+			ii = 0;
+			out =  1;
+		}
+		else
+		{
+			E_off &= controlEon(nCh);
+			ii++;
+			if (ii == 10 & E_off==1)
+			{
+				ii=0;
+				out = 0;
+			}
+				
+		}
+			
+	}
+	return out;
+}
 	
