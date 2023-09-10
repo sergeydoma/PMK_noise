@@ -632,7 +632,7 @@ void ADC_measure_noise(uint8_t nCh, uint32_t* noise_1, uint32_t* noise_2)
 	noise_2[nCh] = ADC_read(n, adc_delay);
 }
 
-_Bool controlEon(uint8_t nCh)
+_Bool controlEON(uint8_t nCh)
 {
 	extern uint32_t adc_delay;
 	uint32_t n = 16;
@@ -665,4 +665,5 @@ _Bool controlEon(uint8_t nCh)
 	}
 
 }
+
 	
