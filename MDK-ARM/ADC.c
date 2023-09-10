@@ -327,7 +327,7 @@ R = R/16;
 // Сопротивление изолияции 2	
 		//led_rgb[adc_current_chan] = 0x1f;
 
-	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 1 
+	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 2 
 	HAL_Delay(adc_delay);
 
 //	test_Status = ADC_Status();
@@ -573,5 +573,43 @@ arrSetpoint[30 + nCh] = R; // Уставка обрезанная снизу
 	R=R+569;
 //	R=R-569;
 //	R=R+569;
+}
+	
+void ADC_measure_noise(uint32_t* noise_1, uint32_t* noise_2)
+{
+	extern uint32_t adc_delay;
+	uint32_t n = 16;//16; // колличество измерений
+	uint32_t s;
+	
+	// Сопротивление изоляции 1 измерение шумов
+	
+	ADC_set_config(0x1050); //0x1050) смещение внешнее REFin2+ REFin2- буфер канал 1 
+	HAL_Delay(adc_delay);		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);			
+	ADC_set_mode(0x800a);  // calibrate full-scale
+	HAL_Delay(adc_delay);
+			
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
+
+	ADC_read(1, adc_delay); // buffer flush	
+	ADC_read(1, adc_delay); // buffer flush
+	*noise_1 = ADC_read(n, adc_delay);
+	// Сопротивление изоляции 2 измерение шумов
+	
+	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 2 
+	HAL_Delay(adc_delay);		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x800a);  // calibrate full-scale
+	HAL_Delay(adc_delay);
+	
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
+
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	*noise_2 = ADC_read(n, adc_delay);
 }
 	
