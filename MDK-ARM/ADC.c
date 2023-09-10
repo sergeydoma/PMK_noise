@@ -631,4 +631,38 @@ void ADC_measure_noise(uint8_t nCh, uint32_t* noise_1, uint32_t* noise_2)
 	ADC_read(1, adc_delay); // buffer flush
 	noise_2[nCh] = ADC_read(n, adc_delay);
 }
+
+_Bool controlEon(uint8_t nCh)
+{
+	extern uint32_t adc_delay;
+	uint32_t n = 16;
+	uint32_t v100;
+	v100 = 0;
+	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
+	HAL_Delay(adc_delay);
+		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x800a);  // calibrate full-scale
+		
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
+
+	//led_rgb[adc_current_chan] = 0x4f;
+
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
+	HAL_Delay(adc_delay);
+	if (v100 < _v100)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+
+}
 	
