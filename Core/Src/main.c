@@ -85,6 +85,8 @@ int16_t blink; // для выбора режима упрвления миган
 		_Bool EON_off = 1; // смещение 100 В отключено
 		uint8_t EON_mode = 0;
 		int EON_curr = 0;
+		_Bool cmdEON;
+		
 		_Bool stMbAdd[2];
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -131,7 +133,7 @@ uint8_t adc_current =0;
 	char md5sum;
 	char ccrrc;
 	
-	uint8_t arrI2c_T[10];
+	uint8_t arrI2c_T[11];
 	
 	uint32_t SetEEprom;
 	_Bool LoadNumDev;
@@ -535,7 +537,7 @@ int main(void)
 						}
 						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) ) // канал в режиме измерения
 						{
-							EON_mode = EONmode(adc_current, EON_off); // функция срабатывает на 10 вызове
+							EON_mode = EONmode(adc_current, EON_off, 10); // функция срабатывает на 10 вызове
 							
 									if (EON_mode == 1)
 									{
@@ -576,7 +578,7 @@ int main(void)
 				else // идет запуск
 				{
 					
-						EON_mode = EONmode(adc_current, EON_off); // функция срабатывает на 10 вызове
+						EON_mode = EONmode(adc_current, EON_off, 10); // функция срабатывает на 10 вызове
 							
 									if (EON_mode == 1)
 									{
@@ -1537,6 +1539,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		 // команда - записать
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
+		 // Управление смещением 100 В
+		 arrI2c_T[10] = EON_off; // 1 когда напряжение должно быть снято
 		 
 //				arrI2c_T[0]= HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_6);  //  adc_current; //test
 //				arrI2c_T[1] = arr[1];	//
