@@ -575,3 +575,24 @@ arrSetpoint[30 + nCh] = R; // Уставка обрезанная снизу
 //	R=R+569;
 }
 	
+_Bool pause(uint16_t delta)
+{
+static uint16_t current = 0; // счетчик
+_Bool out;
+	
+	
+if (current < delta)
+{
+	delta++;
+	out = 0;
+}
+else
+{
+delta = 0;
+out = 1;
+}
+
+return out;
+
+}
+	
