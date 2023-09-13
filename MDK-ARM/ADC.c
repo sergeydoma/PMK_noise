@@ -583,13 +583,14 @@ _Bool out;
 	
 if (current < delta)
 {
-	delta++;
+	current ++;
 	out = 0;
 }
 else
 {
 delta = 0;
 out = 1;
+
 }
 
 return out;
