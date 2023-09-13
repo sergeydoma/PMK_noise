@@ -681,16 +681,16 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay)
 	static int ii = 0;
 	_Bool out;
 	
-	out = 0;
+//	out = 0;
 	
 	if (EONoff)
 	{
-		E_off = controlEon(nCh);
+//		E_off = controlEon(nCh);
 		if (E_off ==0)
 		{
 			ii ++;
 		}
-		if (ii == delay)
+		if (ii == 9)
 		{
 			ii = 0;
 			out =  1;
@@ -702,7 +702,7 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay)
 			{
 			ii++;
 			}
-			if (ii == delay)
+			if (ii == 9)
 			{
 				ii=0;
 				out = 2;

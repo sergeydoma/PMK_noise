@@ -543,8 +543,8 @@ int main(void)
 									{
 										EON_curr++;
 										
-										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
-										if (EON_curr == 10) // не понятно с какого значения это все будет считаться????
+//										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+										if (EON_curr == 2) // не понятно с какого значения это все будет считаться????
 										{
 											EON_curr = 0;
 											EON_off = 0;
@@ -554,7 +554,7 @@ int main(void)
 									{
 										EON_curr++;
 										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett,0,0); // noise_rz1, noise_rz2);
-										if (EON_curr==10)
+										if (EON_curr==2)
 										{
 											EON_curr =0;
 											EON_off = 1;
@@ -584,7 +584,7 @@ int main(void)
 									{
 										EON_curr++;
 										
-										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
+////										ADC_measure_noise(adc_current, noise_rz1, noise_rz2);
 										if (EON_curr == 10) // 
 										{
 											EON_curr = 0;
