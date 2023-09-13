@@ -553,7 +553,7 @@ int main(void)
 									else if (EON_mode == 2)
 									{
 										EON_curr++;
-										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett, noise_rz1, noise_rz2);
+										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett,0,0); // noise_rz1, noise_rz2);
 										if (EON_curr==10)
 										{
 											EON_curr =0;
