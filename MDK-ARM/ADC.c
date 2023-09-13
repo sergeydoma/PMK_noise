@@ -9,7 +9,7 @@ extern float RZ[3];
 extern GPIO switch_gpio[10]; 
 extern _Bool arrBool[0x400];  
 extern	uint16_t arrWord[0x400];
-extern uint16_t current; // счетчик
+
 uint8_t switch_state[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 int adc_current_chan = -1;
@@ -146,21 +146,21 @@ uint32_t ADC_read(uint32_t n, uint32_t delay)
 		
 		// Сопротивление Шлейфа
 
-//	ADC_set_config(0x1012); // Внешний REFin1+ REFin2+  Ain 3 (+) буферный усилитель униполярный режим
+	ADC_set_config(0x1012); // Внешний REFin1+ REFin2+  Ain 3 (+) буферный усилитель униполярный режим
 	HAL_Delay(adc_delay);
 
-//	ADC_set_mode(0x8009);  // calibrate zero
+	ADC_set_mode(0x8009);  // calibrate zero
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
+	ADC_set_mode(0x800a);  // calibrate full-scale
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
+	ADC_set_mode(0x0009);  // return to continuous reads
 	HAL_Delay(adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	s = ADC_read(n, adc_delay);
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	s = ADC_read(n, adc_delay);
 	
 	
 
@@ -225,22 +225,22 @@ arrWord[70 + nCh] = R; // измеренное значение
 		//*******************************************
 	// Проверка наличия 100 В
 	v100 = 0;
-//	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
+	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
 	HAL_Delay(adc_delay);
 		
-//	ADC_set_mode(0x8009);  // calibrate zero
+	ADC_set_mode(0x8009);  // calibrate zero
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
+	ADC_set_mode(0x800a);  // calibrate full-scale
 		
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
+	ADC_set_mode(0x0009);  // return to continuous reads
 	HAL_Delay(adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
 	HAL_Delay(adc_delay);
 	if (v100 < _v100)
 	{
@@ -255,16 +255,16 @@ arrWord[70 + nCh] = R; // измеренное значение
 	
 
 	
-//	ADC_set_config(0x1050); //0x1050) смещение внешнее REFin2+ REFin2- буфер канал 1 
+	ADC_set_config(0x1050); //0x1050) смещение внешнее REFin2+ REFin2- буфер канал 1 
 	HAL_Delay(adc_delay);		
-//	ADC_set_mode(0x8009);  // calibrate zero
+	ADC_set_mode(0x8009);  // calibrate zero
 	HAL_Delay(adc_delay);			
-//	ADC_set_mode(0x800a);  // calibrate full-scale
+	ADC_set_mode(0x800a);  // calibrate full-scale
 	HAL_Delay(adc_delay);
 			
 
 			
-//	ADC_set_mode(0x0009);  // return to continuous reads
+	ADC_set_mode(0x0009);  // return to continuous reads
 	HAL_Delay(adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x4f;
@@ -273,9 +273,9 @@ arrWord[70 + nCh] = R; // измеренное значение
 //	
 //			
 //	HAL_Delay(adc_delay);
-//	ADC_read(1, adc_delay); // buffer flush	
-//	ADC_read(1, adc_delay); // buffer flush
-//	s = ADC_read(n, adc_delay);
+	ADC_read(1, adc_delay); // buffer flush	
+	ADC_read(1, adc_delay); // buffer flush
+	s = ADC_read(n, adc_delay);
 
 	
 	
@@ -327,23 +327,23 @@ R = R/16;
 // Сопротивление изолияции 2	
 		//led_rgb[adc_current_chan] = 0x1f;
 
-//	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 1 
+	ADC_set_config(0x1051); //0x1051) смещение внешнее REFin2+ REFin2- буфер канал 1 
 	HAL_Delay(adc_delay);
 
 //	test_Status = ADC_Status();
 		
-//	ADC_set_mode(0x8009);  // calibrate zero
+	ADC_set_mode(0x8009);  // calibrate zero
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
+	ADC_set_mode(0x800a);  // calibrate full-scale
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
+	ADC_set_mode(0x0009);  // return to continuous reads
 	HAL_Delay(adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	s = ADC_read(n, adc_delay);
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	s = ADC_read(n, adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x1f;
 //	R = 20000.0; //RR
@@ -414,23 +414,23 @@ R = R/16;
 	//*********************************************************************
 	//*********************************************************************
 
-//		ADC_set_config(0x1097); //0x1051) смещение Внутреннее - буфер канал 4
+		ADC_set_config(0x1097); //0x1051) смещение Внутреннее - буфер канал 4
 		HAL_Delay(adc_delay);
 
 	test_Status = ADC_Status();
 		
-//	ADC_set_mode(0x8009);  // calibrate zero
+	ADC_set_mode(0x8009);  // calibrate zero
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
+	ADC_set_mode(0x800a);  // calibrate full-scale
 	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
+	ADC_set_mode(0x0009);  // return to continuous reads
 	HAL_Delay(adc_delay);
 
 	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	s = ADC_read(n, adc_delay);
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	s = ADC_read(n, adc_delay);
 	HAL_Delay(adc_delay);
 //////	//led_rgb[adc_current_chan] = ok ? 0x001f00 : 0x3f0000;  // RGB
 }
@@ -577,10 +577,10 @@ arrSetpoint[30 + nCh] = R; // Уставка обрезанная снизу
 	
 _Bool pause(uint16_t delta)
 {
-
+static uint16_t current = 0; // счетчик
 _Bool out;
 	
-HAL_Delay (100);	
+	
 if (current < delta)
 {
 	current ++;
@@ -594,7 +594,6 @@ out = 1;
 }
 
 return out;
-
 
 }
 	
