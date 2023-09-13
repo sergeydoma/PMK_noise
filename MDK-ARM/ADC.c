@@ -665,7 +665,7 @@ _Bool controlEon(uint8_t nCh)
 	}
 
 }
-uint8_t EONmode(uint8_t nCh, _Bool EONoff)
+uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay)
 {
 
 	static _Bool E_off;
@@ -676,18 +676,24 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff)
 	
 	if (EONoff)
 	{
-		E_off |= controlEon(nCh);
-		ii ++;
-		if (ii == 10 & E_off == 0)
+		E_off = controlEon(nCh);
+		if (E_off ==0)
+		{
+			ii ++;
+		}
+		if (ii == delay)
 		{
 			ii = 0;
 			out =  1;
 		}
 		else
 		{
-			E_off &= controlEon(nCh);
+			E_off = controlEon(nCh);
+			if(E_off==1)
+			{
 			ii++;
-			if (ii == 10 & E_off==1)
+			}
+			if (ii == delay)
 			{
 				ii=0;
 				out = 2;
