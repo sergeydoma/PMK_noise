@@ -292,6 +292,8 @@ void ADC_measure(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool, _Bool calibrate
 _Bool controlEon(uint8_t nCh);
 
 uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay);
+
+
 _Bool pause(uint16_t delta);
 
 /* USER CODE END Private defines */

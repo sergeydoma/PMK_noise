@@ -28,6 +28,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+ uint16_t current = 0; // счетчик
  uint8_t rer[100];
  uint8_t arr[168];
  uint8_t mbInput[16]; // Массив входных данных modbus
@@ -78,6 +79,14 @@ int16_t blink; // для выбора режима упрвления миган
 		_Bool blanTest;
 		
 		_Bool stMbAdd[2];
+		
+		_Bool EON_off =1; // когда напряжение смещени 100 В должно быть снято
+		_Bool pauseEon;
+		_Bool pauseEonM;
+		int i_Eon = 0;
+		uint8_t modeEon =0;
+		uint16_t delayEon = 100;
+		
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
 	{ BT1_GPIO_Port, BT1_Pin },
@@ -525,11 +534,50 @@ int main(void)
 //							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 //							set_set[adc_current] = 1;
 						}
-						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
+						
+						else if (1)//((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
 						{
 
 							// if mode chanall == 2
-							ADC_measure(adc_current, arrWord, arrBool, startSett);						
+									if (modeEon == 3)
+									{
+										EON_off = 1;
+										current++;
+										HAL_Delay(100);
+										
+										if(current > delayEon)
+										{
+											modeEon =4;
+											current = 0;						
+										}
+									}
+              	else if (modeEon==4)
+								{
+										EON_off = 0;
+										current++;
+										HAL_Delay(100);
+										
+										if(current > delayEon)
+										{
+											modeEon =5;
+											current = 0;						
+										}
+								}
+								
+								
+								else if (modeEon == 5)
+								{
+										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+										i_Eon++;
+										if (i_Eon >= 10)
+										{
+											modeEon =3;
+											i_Eon = 0;
+										}
+
+                }
+
+						
 						}
 						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
 						{
@@ -543,25 +591,50 @@ int main(void)
 				}
 				else
 				{
+					if (modeEon ==0)
+					{
+						EON_off = 0;
+						current++;
+						HAL_Delay(100);
+						
+						if(current > delayEon)
+						{
+							modeEon =1;
+							current = 0;						
+						}
 					
-				ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+					}
+					else if (modeEon == 1)
+					{
+								ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+								i_Eon++;
+								if (i_Eon >= 10)
+								{
+									modeEon =2;
+									i_Eon = 0;
+								}
+					}
 				}
 				ADC_CS(-1);
 			}
-			else if ((adc_current ==10)& (startSett==0))
+			if ((modeEon == 2) & (startSett == 0)) //(adc_current ==10)& (startSett==0))//& EON_off == 0)
 			{
-				startSett = 1;
+				startSett = 1;	
+				i_Eon = 0;
+				modeEon=3;
+				current =0;
 			}
 			
 					
 			}
 		}
+	}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
-}
+
 
 /**
   * @brief System Clock Configuration
@@ -1473,6 +1546,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		 // команда - записать
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
+// Управление смещением 100 В
+					arrI2c_T[10] = EON_off; // 1 когда напряжение должно быть снято
+		 
+		 		 
 		 
 //				arrI2c_T[0]= HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_6);  //  adc_current; //test
 //				arrI2c_T[1] = arr[1];	//
