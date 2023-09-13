@@ -15,6 +15,8 @@ uint8_t switch_state[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 int adc_current_chan = -1;
 uint8_t test_Status;
 
+extern _Bool EON_off;
+
 
 void ADC_CS(int n)
 {
@@ -655,14 +657,19 @@ _Bool controlEon(uint8_t nCh)
 	ADC_read(1, adc_delay); // buffer flush
 	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
 	HAL_Delay(adc_delay);
-	if (v100 < _v100)
-	{
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}
+	//////	if (v100 < _v100) //230913 тестовая версия для проверки задержек
+//////	{
+//////		return 0;
+//////	}
+//////	else
+//////	{
+//////		return 1;
+//////	}
+if (EON_off == 1)
+{return 0;}
+if (EON_off == 0)
+{return 1;}
+
 
 }
 uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay)
