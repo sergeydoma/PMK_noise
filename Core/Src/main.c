@@ -80,7 +80,7 @@ int16_t blink; // для выбора режима упрвления миган
 		
 		_Bool stMbAdd[2];
 		
-		_Bool EON_off =1; // когда напряжение смещени 100 В должно быть снято
+		uint8_t EON_off =1; // когда напряжение смещени 100 В должно быть снято
 		_Bool pauseEon;
 		_Bool pauseEonM;
 		int i_Eon = 0;
@@ -132,7 +132,7 @@ uint8_t adc_current =0;
 	char md5sum;
 	char ccrrc;
 	
-	uint8_t arrI2c_T[10];
+	uint8_t arrI2c_T[11];
 	
 	uint32_t SetEEprom;
 	_Bool LoadNumDev;
