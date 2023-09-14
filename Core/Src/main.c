@@ -1547,7 +1547,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
 // Управление смещением 100 В
-					arrI2c_T[10] = 0; //EON_off; // 1 когда напряжение должно быть снято
+					arrI2c_T[10] = EON_off; // 1 когда напряжение должно быть снято
 		 
 		 		 
 		 
