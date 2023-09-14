@@ -1547,14 +1547,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
 // Управление смещением 100 В
-					arrI2c_T[10] = EON_off; // 1 когда напряжение должно быть снято
+					arrI2c_T[10] = 0; //EON_off; // 1 когда напряжение должно быть снято
 		 
 		 		 
 		 
 //				arrI2c_T[0]= HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_6);  //  adc_current; //test
 //				arrI2c_T[1] = arr[1];	//
 							for (int i=0; i<100; i++){}
-		 					WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,arrI2c_T,10);// RTF =
+		 					WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,arrI2c_T,11);// RTF =
 							for (int i=0; i<100; i++){}
 		 
 		 
