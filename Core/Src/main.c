@@ -534,12 +534,7 @@ int main(void)
 //							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 //							set_set[adc_current] = 1;
 						}
-						
-						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
-						{
-
-							// if mode chanall == 2
-									if (modeEon == 3)
+						if (modeEon == 3)
 									{
 										EON_off = 1;
 										current++;
@@ -560,34 +555,95 @@ int main(void)
 										if(current > delayEon)
 										{
 											modeEon =5;
-											current = 0;						
+											current = 0;
+											adc_current=0;
+											
 										}
 								}
-								
-								
 								else if (modeEon == 5)
-								{
-										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+										{
+										EON_off = 0;
+//										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 										i_Eon++;
+										
 										if (i_Eon >= 10)
 										{
 											modeEon =3;
 											i_Eon = 0;
 										}
+										if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) ) //& (modeEon == 5))
+												{
+													ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+												}
+										if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5)) //)& (modeEon == 5))
+												{
+													arrBool[adc_current+20]=1;
+													arrBool[adc_current+30]=1;
+													arrBool[adc_current+40]=1;
+													arrBool[adc_current+50]=1;
+													
+													//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
+												}
+										
+										
+										
 
                 }
+						
+//						else if (((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )& (modeEon == 5))
+//						{
+//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+
+							// if mode chanall == 2
+//									if (modeEon == 3)
+//									{
+//										EON_off = 1;
+//										current++;
+//										HAL_Delay(100);
+//										
+//										if(current > delayEon)
+//										{
+//											modeEon =4;
+//											current = 0;						
+//										}
+//									}
+//              	else if (modeEon==4)
+//								{
+//										EON_off = 0;
+//										current++;
+//										HAL_Delay(100);
+//										
+//										if(current > delayEon)
+//										{
+//											modeEon =5;
+//											current = 0;						
+//										}
+//								}
+								
+								
+//								if (modeEon == 5)
+//								{
+//										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+//										i_Eon++;
+//										if (i_Eon >= 10)
+//										{
+//											modeEon =3;
+//											i_Eon = 0;
+//										}
+
+//                }
 
 						
-						}
-						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
-						{
-							arrBool[adc_current+20]=1;
-							arrBool[adc_current+30]=1;
-							arrBool[adc_current+40]=1;
-							arrBool[adc_current+50]=1;
-							
-							//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
-						}
+//						}
+//						else if (((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )& (modeEon == 5))
+//						{
+//							arrBool[adc_current+20]=1;
+//							arrBool[adc_current+30]=1;
+//							arrBool[adc_current+40]=1;
+//							arrBool[adc_current+50]=1;
+//							
+//							//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
+//						}
 				}
 				else
 				{
@@ -1547,7 +1603,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
 // Управление смещением 100 В
-					arrI2c_T[10] = EON_off; // 1 когда напряжение должно быть снято
+//					arrI2c_T[10] = 1; //EON_off; // 1 когда напряжение должно быть снято
 		 
 		 		 
 		 
@@ -1565,10 +1621,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 								
 									
 							mbAddr = arrI2c_R[0]+ i2cAddr;
-							if((arrWord[140]&2)!=0)
-							{arrI2c_T[0]=1;}
-							else
-								{arrI2c_T[0]=0;}
+								
+								
+//							if((arrWord[140]&2)!=0)
+//								
+//							{arrI2c_T[0]=1;}
+//							else
+//								{arrI2c_T[0]=0;}
+								
+								arrI2c_T[0] = EON_off;
 								
 //							WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,masterAddr,5); //arrI2c, 3);								
 //							for (int i=0; i<100; i++){}
