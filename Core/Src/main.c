@@ -524,8 +524,8 @@ int main(void)
 					if (modeEon == 3)
 								{
 										EON_off = 1;
-										readyEon = EON_ready(adc_current);									
-										if (readyEon == 0)
+										EON_ready();									
+										if (arrWord[380] == 1)
 										{
 												current++;
 												HAL_Delay(100);												
@@ -538,10 +538,7 @@ int main(void)
 								}
 						else if (modeEon==4)
 								{
-										EON_off = 0;
-										readyEon = EON_ready(adc_current);									
-										if (readyEon == 1)
-												{	
+										EON_off = 0;										
 												current++;
 												HAL_Delay(100);
 												
@@ -550,7 +547,7 @@ int main(void)
 														modeEon =5;
 														current = 0;																						
 													}
-											}
+											
 								}
 						else if (modeEon == 5)
 								{
@@ -578,9 +575,7 @@ int main(void)
 					if (modeEon ==0)
 					{
 						EON_off = 0;
-						readyEon = EON_ready(adc_current);									
-							if (readyEon == 1)
-							{
+			
 								current++;
 								HAL_Delay(100);
 								
@@ -589,7 +584,7 @@ int main(void)
 									modeEon =1;
 									current = 0;						
 								}
-							}
+							
 					
 					}
 					else if (modeEon == 1)

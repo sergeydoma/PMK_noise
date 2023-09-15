@@ -225,6 +225,7 @@ arrWord[70 + nCh] = R; // измеренное значение
 		//*******************************************
 	// Проверка наличия 100 В
 	v100 = 0;
+			
 	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
 	HAL_Delay(adc_delay);
 		
@@ -596,11 +597,13 @@ out = 1;
 return out;
 
 }
-_Bool EON_ready(uint8_t nCh)
+void EON_ready()
 {
 	extern uint32_t adc_delay;
 	uint32_t v100; // Временно напряжение 100 вольт
 	_Bool out; //Выход
+	uint32_t n = 16;//16;
+	
 	
 	
 		// Проверка наличия 100 В
@@ -620,16 +623,16 @@ _Bool EON_ready(uint8_t nCh)
 
 	ADC_read(1, adc_delay); // buffer flush
 	ADC_read(1, adc_delay); // buffer flush
-	v100 = ADC_read(nCh, adc_delay); // Измерение 100 В.
+	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
 	HAL_Delay(adc_delay);
+
 	if (v100 < _v100)
 	{
-		out = 0;
+		arrWord[380] 	= 1;
+		
 	}
 	else
 	{
-		out = 1;
+		arrWord[380] =  10;
 	}
-return out;
 }
-	
