@@ -509,33 +509,19 @@ int main(void)
 			
 			if (adc_current < 10)
 			{
-//				arrI2c_T[0]=adc_current; //test
-//		
-//				HAL_I2C_Slave_Transmit(&hi2c1,arrI2c, 1, 1000);	
-				
-				if (PMU_Mode==2)//230722
-				{
-					preset_V(); // Предустановка с запиью параметров в Флеш
-				}
-				
-				
-				
-				ADC_CS(adc_current);
-				ADC_reset();
-				if (startSett) // запуск прошел
-				{
-					if(arrWord[adc_current+40]==0)
+						
+						if (PMU_Mode==2)//230722
 						{
-							arrBool[adc_current+20]=1;
-							arrBool[adc_current+30]=1;
-							arrBool[adc_current+40]=1;
-							arrBool[adc_current+50]=1;
-							
-//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
-//							set_set[adc_current] = 1;
+							preset_V(); // Предустановка с запиью параметров в Флеш
 						}
-						if (modeEon == 3)
-									{
+								
+				ADC_CS(adc_current); // последовательное включение АЦП
+				ADC_reset();
+						
+				if (startSett) // запуск прошел
+				{						
+					if (modeEon == 3)
+								{
 										EON_off = 1;
 										current++;
 										HAL_Delay(100);
@@ -545,8 +531,8 @@ int main(void)
 											modeEon =4;
 											current = 0;						
 										}
-									}
-              	else if (modeEon==4)
+								}
+						else if (modeEon==4)
 								{
 										EON_off = 0;
 										current++;
@@ -555,89 +541,29 @@ int main(void)
 										if(current > delayEon)
 										{
 											modeEon =5;
-											current = 0;
-											adc_current=0;
-											
+											current = 0;																						
 										}
 								}
-								else if (modeEon == 5)
-										{
-										EON_off = 0;
-											if (arrWord[i_Eon+40]==2)
-											{
-												ADC_measure(i_Eon, arrWord, arrBoolTemp, startSett);
-											}
-											else
-											{
-												arrBool[i_Eon+20]=1;
-												arrBool[i_Eon+30]=1;
-												arrBool[i_Eon+40]=1;
-												arrBool[i_Eon+50]=1;											
-											}
-											
-										i_Eon++;
-										
-										if (i_Eon >= 10)
-										{
-											modeEon =3;
-											i_Eon = 0;
-										}
-                }
-						
-//						else if (((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )& (modeEon == 5))
-//						{
-//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+						else if (modeEon == 5)
+								{
+									EON_off = 0;
+											if (i_Eon >= 10)
+														{
+															modeEon =3;
+															i_Eon = 0;
+														}
+											ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 
-							// if mode chanall == 2
-//									if (modeEon == 3)
-//									{
-//										EON_off = 1;
-//										current++;
-//										HAL_Delay(100);
-//										
-//										if(current > delayEon)
-//										{
-//											modeEon =4;
-//											current = 0;						
-//										}
-//									}
-//              	else if (modeEon==4)
-//								{
-//										EON_off = 0;
-//										current++;
-//										HAL_Delay(100);
-//										
-//										if(current > delayEon)
-//										{
-//											modeEon =5;
-//											current = 0;						
-//										}
-//								}
-								
-								
-//								if (modeEon == 5)
-//								{
-//										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
-//										i_Eon++;
-//										if (i_Eon >= 10)
-//										{
-//											modeEon =3;
-//											i_Eon = 0;
-//										}
-
-//                }
-
-						
-//						}
-//						else if (((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )& (modeEon == 5))
-//						{
-//							arrBool[adc_current+20]=1;
-//							arrBool[adc_current+30]=1;
-//							arrBool[adc_current+40]=1;
-//							arrBool[adc_current+50]=1;
-//							
-//							//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
-//						}
+											if (arrWord[adc_current+40]!=2)
+														{
+															arrBool[adc_current+20]=1;
+															arrBool[adc_current+30]=1;
+															arrBool[adc_current+40]=1;
+															arrBool[adc_current+50]=1;											
+														}										
+									i_Eon++;
+								}
+				
 				}
 				else
 				{
