@@ -86,6 +86,7 @@ int16_t blink; // для выбора режима упрвления миган
 		int i_Eon = 0;
 		uint8_t modeEon =0;
 		uint16_t delayEon = 900;
+		_Bool readyEon;
 		
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -523,13 +524,16 @@ int main(void)
 					if (modeEon == 3)
 								{
 										EON_off = 1;
-										current++;
-										HAL_Delay(100);
-										
-										if(current > delayEon)
+										readyEon = EON_ready(adc_current);									
+										if (readyEon == 0)
 										{
-											modeEon =4;
-											current = 0;						
+												current++;
+												HAL_Delay(100);												
+												if(current > delayEon)
+												{
+													modeEon =4;
+													current = 0;						
+												}
 										}
 								}
 						else if (modeEon==4)
