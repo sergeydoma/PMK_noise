@@ -563,7 +563,18 @@ int main(void)
 								else if (modeEon == 5)
 										{
 										EON_off = 0;
-//										ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+											if (arrWord[i_Eon+40]==2)
+											{
+												ADC_measure(i_Eon, arrWord, arrBoolTemp, startSett);
+											}
+											else
+											{
+												arrBool[i_Eon+20]=1;
+												arrBool[i_Eon+30]=1;
+												arrBool[i_Eon+40]=1;
+												arrBool[i_Eon+50]=1;											
+											}
+											
 										i_Eon++;
 										
 										if (i_Eon >= 10)
@@ -571,23 +582,6 @@ int main(void)
 											modeEon =3;
 											i_Eon = 0;
 										}
-										if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) ) //& (modeEon == 5))
-												{
-													ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
-												}
-										if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5)) //)& (modeEon == 5))
-												{
-													arrBool[adc_current+20]=1;
-													arrBool[adc_current+30]=1;
-													arrBool[adc_current+40]=1;
-													arrBool[adc_current+50]=1;
-													
-													//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
-												}
-										
-										
-										
-
                 }
 						
 //						else if (((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )& (modeEon == 5))
