@@ -66,7 +66,7 @@ int16_t blink; // для выбора режима упрвления миган
 		_Bool slaveWrData;
 		_Bool slaveRdData;
 		 int iik;
-		uint8_t arrI2c_R[10];
+		uint8_t arrI2c_R[11];
 		
 		_Bool i2c_rd = 0;
 		_Bool i2c_td = 0;
@@ -86,7 +86,7 @@ int16_t blink; // для выбора режима упрвления миган
 		int i_Eon = 0;
 		uint8_t modeEon =0;
 		uint16_t delayEon = 900;
-		_Bool readyEon;
+		uint8_t readyEon;
 		
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -200,7 +200,7 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 			
 		slaveWrData = 0;
-							RTF = HAL_I2C_Slave_Receive_DMA(&hi2c1, arrI2c_R,10);						
+							RTF = HAL_I2C_Slave_Receive_DMA(&hi2c1, arrI2c_R,11);						
 							for (int i=0; i<100; i++){}
 							arrWord[110] = arrI2c_R[1]<<8	| arrI2c_R[2];
 							arrWord[111] = arrI2c_R[3]<<8	| arrI2c_R[4];
@@ -523,9 +523,8 @@ int main(void)
 				{						
 					if (modeEon == 3)
 								{
-										EON_off = 1;
-										EON_ready();									
-										if (arrWord[380] == 1)
+										EON_off = 1;																		
+										if(readyEon ==0)
 										{
 												current++;
 												HAL_Delay(100);												
@@ -535,10 +534,17 @@ int main(void)
 													current = 0;						
 												}
 										}
+										else
+										{
+											HAL_Delay(100);
+										}
+										
 								}
 						else if (modeEon==4)
 								{
-										EON_off = 0;										
+										EON_off = 0;
+									if (readyEon == 1)
+										{									
 												current++;
 												HAL_Delay(100);
 												
@@ -547,6 +553,11 @@ int main(void)
 														modeEon =5;
 														current = 0;																						
 													}
+										}
+										else
+										{
+										HAL_Delay(100);
+										}
 											
 								}
 						else if (modeEon == 5)
@@ -557,7 +568,7 @@ int main(void)
 															modeEon =3;
 															i_Eon = 0;
 														}
-											ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+											ADC_measure(adc_current, arrWord, arrBool, startSett);	
 
 											if (arrWord[adc_current+40]!=2)
 														{
@@ -575,6 +586,9 @@ int main(void)
 					if (modeEon ==0)
 					{
 						EON_off = 0;
+							
+						if(readyEon ==1)
+						{
 			
 								current++;
 								HAL_Delay(100);
@@ -584,6 +598,11 @@ int main(void)
 									modeEon =1;
 									current = 0;						
 								}
+							}
+						else
+						{
+							HAL_Delay(100);
+						}
 							
 					
 					}
@@ -1548,7 +1567,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 								
 									
 							mbAddr = arrI2c_R[0]+ i2cAddr;
-								
+							readyEon = arrI2c_R[10];	
 								
 //							if((arrWord[140]&2)!=0)
 //								
