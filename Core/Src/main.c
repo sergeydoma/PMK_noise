@@ -89,6 +89,7 @@ int16_t blink; // для выбора режима упрвления миган
 		uint8_t readyEon;
 		uint8_t modeEon;
 		uint8_t timeModeEon = 0;
+		_Bool startLokal = 0;
 		
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -594,10 +595,13 @@ int main(void)
 				}
 				else  // идет процесс старта
 				{
-					if (modeEon ==  3)
+					if(modeEon==2)
+					{startLokal = 1;}
+					
+					else if ((modeEon == 3)& (startLokal ==1))
 					{	
 						timeModeEon = 1; 
-						
+						startLokal = 0;
 						ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
 						
 					}
