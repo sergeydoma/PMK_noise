@@ -165,6 +165,14 @@ typedef struct
 #define _v100				0x10000			// Сопротивление шлейфа
 #endif
 
+#ifndef _Voltconst
+#define _Voltconst	   		0x7D0630 //0x7D0654 // 0x7D3736 //0x7D4505 // 0x7D751B//  смещение для биполярного измерения напряжения
+#endif
+
+#ifndef _setVolt
+#define _setVolt					5				// уставка по умолчению для ошибки по напряжению утечки
+#endif
+
 //#ifndef UID_BASE
 //#define UID_BASE 0x1FFFF7E8
 //#endif
@@ -278,6 +286,8 @@ uint16_t ADC_readID(void);
  uint32_t ADC_read(uint32_t n, uint32_t delay);
 //void ADC_measure(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool, _Bool calibrate, uint32_t* noise_1, uint32_t* noise_2);
 void ADC_measure_Pre(uint8_t nCh, uint16_t* arrWord, uint16_t* arrSetpoint);
+
+void ADC_measureVolt(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool);
 uint16_t ADC_Error(uint8_t id);
 void LedCH(uint16_t kDelay, uint16_t* ledCh);
 _Bool All_buttons_NoPush();
@@ -294,6 +304,7 @@ void EON_ready();
 
 uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay);
 
+uint32_t Alarm_blinck (uint32_t color1, uint32_t color2, uint16_t period,uint8_t Ch);
 
 _Bool pause(uint16_t delta);
 

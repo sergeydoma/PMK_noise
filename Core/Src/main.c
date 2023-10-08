@@ -87,6 +87,8 @@ int16_t blink; // для выбора режима упрвления миган
 		uint8_t modeEon =0;
 		uint16_t delayEon = 900;
 		uint8_t readyEon;
+		uint8_t modeEon;
+		uint8_t timeModeEon = 0;
 		
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
@@ -112,7 +114,7 @@ uint8_t adc_current =0;
 	int currentPB =0; //  селекция нажатия кнопки push_Button
 	// Flash
 		uint8_t data[64];    // test
-    uint16_t res[64];		// test
+    uint16_t res[400];		// test
 	// monitor CH
 	uint8_t ch_monitor[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	int ideley=0;
@@ -133,7 +135,7 @@ uint8_t adc_current =0;
 	char md5sum;
 	char ccrrc;
 	
-	uint8_t arrI2c_T[11];
+	uint8_t arrI2c_T[12];
 	
 	uint32_t SetEEprom;
 	_Bool LoadNumDev;
@@ -274,31 +276,29 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
   * @retval int
   */
 int main(void)
-// test git
-
 {
   /* USER CODE BEGIN 1 */
-	//ID CPU
-	__UniqueID[0] = UniqueID[0];
-	__UniqueID[1] = UniqueID[1];
-	__UniqueID[2] = UniqueID[2];
+//	//ID CPU
+//	__UniqueID[0] = UniqueID[0];
+//	__UniqueID[1] = UniqueID[1];
+//	__UniqueID[2] = UniqueID[2];
 
-	arrWord[100] = __UniqueID[0];
-	arrWord[101] = __UniqueID[0]>>16;
-	arrWord[102] = __UniqueID[1];
-	arrWord[103] = __UniqueID[1]>>16;
-	arrWord[104] = __UniqueID[2];
-	arrWord[105] = __UniqueID[2]>>16;
-	
-	// Версия программы
-	arrWord[90] = _version>>16;
-	arrWord[91] = (uint16_t)_version;
-//	arrWord[92] = 20;
-//	arrWord[93] = 01;
-// md5
-	
-		uint8_t result[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-	 
+//	arrWord[100] = __UniqueID[0];
+//	arrWord[101] = __UniqueID[0]>>16;
+//	arrWord[102] = __UniqueID[1];
+//	arrWord[103] = __UniqueID[1]>>16;
+//	arrWord[104] = __UniqueID[2];
+//	arrWord[105] = __UniqueID[2]>>16;
+//	
+//	// Версия программы
+//	arrWord[90] = _version>>16;
+//	arrWord[91] = (uint16_t)_version;
+////	arrWord[92] = 20;
+////	arrWord[93] = 01;
+//// md5
+//	
+//		uint8_t result[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+//	 
 
 	
 		uint8_t tbyte;
@@ -348,11 +348,11 @@ int main(void)
 
 	//Проверяем flash
 	
-	 MY_FLASH_ReadN(0,res,50,DATA_TYPE_16);
+	 MY_FLASH_ReadN(0,res,400,DATA_TYPE_16);
 	 
 	if (res[0] != 0xffff)
 	{	
-		MY_FLASH_ReadN (0, arrWord, 50, DATA_TYPE_16);	
+		MY_FLASH_ReadN (0, arrWord, 400, DATA_TYPE_16);	
 	}
 //    MY_FLASH_WriteN(0,arrWord,40,DATA_TYPE_16); // Запись
 //    MY_FLASH_ReadN(0,res,8,DATA_TYPE_8);	
@@ -360,6 +360,37 @@ int main(void)
   arrBool[30]=1; arrBool[31]=1; arrBool[32]=1;arrBool[33]=1;arrBool[34]=1; arrBool[35]=1; arrBool[36]=1; arrBool[37]=1; arrBool[38]=1; arrBool[39]=1;
 	arrBool[40]=1; arrBool[41]=1; arrBool[42]=1;arrBool[43]=1;arrBool[44]=1; arrBool[45]=1; arrBool[46]=1; arrBool[47]=1; arrBool[48]=1; arrBool[49]=1;
 	arrBool[50]=1; arrBool[51]=1; arrBool[52]=1;arrBool[53]=1;arrBool[54]=1; arrBool[55]=1; arrBool[56]=1; arrBool[57]=1; arrBool[58]=1; arrBool[59]=1;
+	
+	for(int i = 0; i<10 ; i++)
+	{
+			if (arrWord[i+200]==0)
+			{arrWord[i+200]=_setVolt;}
+	}
+	arrWord[140]=0;
+	arrWord[380]=10;
+	arrWord[221] = 0xFC00;
+	//ID CPU
+	__UniqueID[0] = UniqueID[0];
+	__UniqueID[1] = UniqueID[1];
+	__UniqueID[2] = UniqueID[2];
+
+	arrWord[100] = __UniqueID[0];
+	arrWord[101] = __UniqueID[0]>>16;
+	arrWord[102] = __UniqueID[1];
+	arrWord[103] = __UniqueID[1]>>16;
+	arrWord[104] = __UniqueID[2];
+	arrWord[105] = __UniqueID[2]>>16;
+	
+	// Версия программы
+	arrWord[90] = _version>>16;
+	arrWord[91] = (uint16_t)_version;
+//	arrWord[92] = 20;
+//	arrWord[93] = 01;
+// md5
+	
+		uint8_t result[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+	 
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -403,8 +434,8 @@ int main(void)
 //		CCRC = pro_CRC();
 			stMbAdd[0]=HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_0)!=0;
 			stMbAdd[1]=HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_1)!=0;
-			i2cAddr = stMbAdd[0]+stMbAdd[1]; //+1; 230807	
-			hi2c1.Init.OwnAddress1 = i2cAddr;
+			i2cAddr = stMbAdd[0]+stMbAdd[1]+1; //230807	
+//			hi2c1.Init.OwnAddress1 = i2cAddr;
 		
 		CCRC = HAL_CRC_Calculate(&hcrc, (uint32_t *)0x8000000, 0xE208); //0x40000);
 //		md5sum = (uint32_t)CCRC;
@@ -420,7 +451,7 @@ int main(void)
 		ADC_CS(-1); // Выбор АЦП отключен
 
 	
-	
+	hi2c1.Init.OwnAddress1 = i2cAddr;
 		
 	HAL_TIM_PWM_Start_IT(&htim9, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start_IT(&htim9, TIM_CHANNEL_2);
@@ -500,8 +531,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {
-		 
+	{
+//		HAL_IWDG_Refresh(&hiwdg);
 		
 		for(adc_current=0; adc_current<11; adc_current++) 
 		{
@@ -510,133 +541,219 @@ int main(void)
 			
 			if (adc_current < 10)
 			{
-						
-						if (PMU_Mode==2)//230722
-						{
-							preset_V(); // Предустановка с запиью параметров в Флеш
-						}
-								
-				ADC_CS(adc_current); // последовательное включение АЦП
-				ADC_reset();
-						
-				if (startSett) // запуск прошел
-				{						
-					if (modeEon == 3)
-								{
-										EON_off = 1;																		
-										if(readyEon ==0)
-										{
-												current++;
-												HAL_Delay(100);												
-												if(current > delayEon)
-												{
-													modeEon =4;
-													current = 0;						
-												}
-										}
-										else
-										{
-											HAL_Delay(100);
-										}
-										
-								}
-						else if (modeEon==4)
-								{
-										EON_off = 0;
-									if (readyEon == 1)
-										{									
-												current++;
-												HAL_Delay(100);
-												
-												if(current > delayEon)
-													{
-														modeEon =5;
-														current = 0;																						
-													}
-										}
-										else
-										{
-										HAL_Delay(100);
-										}
-											
-								}
-						else if (modeEon == 5)
-								{
-									EON_off = 0;
-											if (i_Eon >= 10)
-														{
-															modeEon =3;
-															i_Eon = 0;
-														}
-											ADC_measure(adc_current, arrWord, arrBool, startSett);	
-
-											if (arrWord[adc_current+40]!=2)
-														{
-															arrBool[adc_current+20]=1;
-															arrBool[adc_current+30]=1;
-															arrBool[adc_current+40]=1;
-															arrBool[adc_current+50]=1;											
-														}										
-									i_Eon++;
-								}
+//				ADC_measureVolt(adc_current,arrWord,arrBool);
+//				arrI2c_T[0]=adc_current; //test
+//		
+//				HAL_I2C_Slave_Transmit(&hi2c1,arrI2c, 1, 1000);	
 				
-				}
-				else
+				if (PMU_Mode==2)//230722
 				{
-					if (modeEon ==0)
-					{
-						EON_off = 0;
+					preset_V(); // Предустановка с запиью параметров в Флеш
+				}
+				
+				
+				
+				ADC_CS(adc_current);
+				ADC_reset();
+//				ADC_measureVolt(adc_current,arrWord,arrBool);
+				if (startSett) // запуск прошел
+				{
+					if(arrWord[adc_current+40]==0)
+						{
+							arrBool[adc_current+20]=1;
+							arrBool[adc_current+30]=1;
+							arrBool[adc_current+40]=1;
+							arrBool[adc_current+50]=1;
 							
-						if(readyEon ==1)
-						{
-			
-								current++;
-								HAL_Delay(100);
-								
-								if(current > delayEon)
-								{
-									modeEon =1;
-									current = 0;						
-								}
-							}
-						else
-						{
-							HAL_Delay(100);
+//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+//							set_set[adc_current] = 1;
 						}
+						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
+						{
+							if (modeEon == 3)
+							// if mode chanall == 2
+								{
+								ADC_measure(adc_current, arrWord, arrBool, startSett);
+								}	
+							else if
+								(modeEon == 1)
+								{
+									// вычисляем напряжения
+									ADC_measureVolt(adc_current,arrWord,arrBool);
+								}
+						}
+						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
+						{
+							arrBool[adc_current+20]=1;
+							arrBool[adc_current+30]=1;
+							arrBool[adc_current+40]=1;
+							arrBool[adc_current+50]=1;
 							
-					
+							//							ADC_measure(adc_current, arrWord, arrBoolTemp, startSett); // монитринг только включеных калалов
+						}
+				}
+				else  // идет процесс старта
+				{
+					if (modeEon ==  3)
+					{	
+						timeModeEon = 1; 
+						
+						ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+						
 					}
 					else if (modeEon == 1)
-					{
-								ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
-								i_Eon++;
-								if (i_Eon >= 10)
-								{
-									modeEon =2;
-									i_Eon = 0;
-								}
+					{ 
+					 // РЕЖИМ измерения напряжения и сравнения с порогом
+						ADC_measureVolt(adc_current,arrWord,arrBool);
 					}
 				}
 				ADC_CS(-1);
 			}
-			if ((modeEon == 2) & (startSett == 0)) //(adc_current ==10)& (startSett==0))//& EON_off == 0)
+			if  ((timeModeEon ==1) & (startSett==0) & (modeEon == 0))    //((adc_current ==0) & (startSett==0) & (modeEon == 3))
 			{
-				startSett = 1;	
-				i_Eon = 0;
-				modeEon=3;
-				current =0;
+				startSett = 1;
+				timeModeEon = 0;
 			}
 			
 					
 			}
 		}
-	}
-    /* USER CODE END WHILE */
+//  {
+//		 
+//		
+//		for(adc_current=0; adc_current<11; adc_current++) 
+//		{
+//			
+//			HAL_IWDG_Refresh(&hiwdg);
+//			
+//			if (adc_current < 10)
+//			{
+//						
+//						if (PMU_Mode==2)//230722
+//						{
+//							preset_V(); // Предустановка с запиью параметров в Флеш
+//						}
+//								
+//				ADC_CS(adc_current); // последовательное включение АЦП
+//				ADC_reset();
+//						
+//				if (startSett) // запуск прошел
+//				{						
+//					if (modeEon == 3)
+//								{
+//										EON_off = 1;																		
+//										if(readyEon ==0)
+//										{
+//												current++;
+//												HAL_Delay(100);												
+//												if(current > delayEon)
+//												{
+//													modeEon =4;
+//													current = 0;						
+//												}
+//										}
+//										else
+//										{
+//											HAL_Delay(100);
+//										}
+//										
+//								}
+//						else if (modeEon==4)
+//								{
+//										EON_off = 0;
+//									if (readyEon == 1)
+//										{									
+//												current++;
+//												HAL_Delay(100);
+//												
+//												if(current > delayEon)
+//													{
+//														modeEon =5;
+//														current = 0;																						
+//													}
+//										}
+//										else
+//										{
+//										HAL_Delay(100);
+//										}
+//											
+//								}
+//						else if (modeEon == 5)
+//								{
+//									EON_off = 0;
+//											if (i_Eon >= 10)
+//														{
+//															modeEon =3;
+//															i_Eon = 0;
+//														}
+//											ADC_measure(adc_current, arrWord, arrBool, startSett);	
+
+//											if (arrWord[adc_current+40]!=2)
+//														{
+//															arrBool[adc_current+20]=1;
+//															arrBool[adc_current+30]=1;
+//															arrBool[adc_current+40]=1;
+//															arrBool[adc_current+50]=1;											
+//														}										
+//									i_Eon++;
+//								}
+//				
+//				}
+//				else
+//				{
+//					if (modeEon ==0)
+//					{
+//						EON_off = 0;
+//							
+//						if(readyEon ==1)
+//						{
+//			
+//								current++;
+//								HAL_Delay(100);
+//								
+//								if(current > delayEon)
+//								{
+//									modeEon =1;
+//									current = 0;						
+//								}
+//							}
+//						else
+//						{
+//							HAL_Delay(100);
+//						}
+//							
+//					
+//					}
+//					else if (modeEon == 1)
+//					{
+//								ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+//								i_Eon++;
+//								if (i_Eon >= 10)
+//								{
+//									modeEon =2;
+//									i_Eon = 0;
+//								}
+//					}
+//				}
+//				ADC_CS(-1);
+//			}
+//			if ((modeEon == 2) & (startSett == 0)) //(adc_current ==10)& (startSett==0))//& EON_off == 0)
+//			{
+//				startSett = 1;	
+//				i_Eon = 0;
+//				modeEon=3;
+//				current =0;
+//			}
+//			
+//					
+//			}
+//		}
+	    /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
   
   /* USER CODE END 3 */
-
+}
 
 /**
   * @brief System Clock Configuration
@@ -1549,14 +1666,14 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
 // Управление смещением 100 В
-//					arrI2c_T[10] = 1; //EON_off; // 1 когда напряжение должно быть снято
+					arrI2c_T[11] = 0xBB; //EON_off; // 1 когда напряжение должно быть снято
 		 
 		 		 
 		 
 //				arrI2c_T[0]= HAL_GPIO_ReadPin(GPIOD, GPIO_PIN_6);  //  adc_current; //test
 //				arrI2c_T[1] = arr[1];	//
 							for (int i=0; i<100; i++){}
-		 					WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,arrI2c_T,11);// RTF =
+		 					WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,arrI2c_T,12);// RTF =
 							for (int i=0; i<100; i++){}
 		 
 		 
@@ -1567,7 +1684,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 								
 									
 							mbAddr = arrI2c_R[0]+ i2cAddr;
-							readyEon = arrI2c_R[10];	
+							modeEon = arrI2c_R[10];	
 								
 //							if((arrWord[140]&2)!=0)
 //								
@@ -1601,7 +1718,7 @@ void preset_V(void)
 		ttr = 0;
 	
 		
-		MY_FLASH_ReadN (0, res, 50, DATA_TYPE_16);	// чтение всего из флеш
+		MY_FLASH_ReadN (0, res, 400, DATA_TYPE_16);	// чтение всего из флеш
 
 		//		int i;
 		
@@ -1629,6 +1746,10 @@ void preset_V(void)
 				{
 					ttr=1;
 				}
+				if(arrWord[i+200] != res[i+200])
+				{
+					ttr=1;
+				}	
 //			if (arrWord[i+40] !=res[i+40]){ttr=1;}
 					
 			
@@ -1647,7 +1768,7 @@ void preset_V(void)
 			
 			__disable_irq();
 				
-			MY_FLASH_WriteN(0,arrWord,50,DATA_TYPE_16); // Запись измененных значений режима и уставок.	
+			MY_FLASH_WriteN(0,arrWord,400,DATA_TYPE_16); // Запись измененных значений режима и уставок.	
 
 			__enable_irq();
 			

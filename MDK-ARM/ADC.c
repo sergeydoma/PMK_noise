@@ -14,7 +14,7 @@ uint8_t switch_state[10] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 int adc_current_chan = -1;
 uint8_t test_Status;
-
+uint32_t callibrateU[10];
 
 void ADC_CS(int n)
 {
@@ -635,4 +635,93 @@ void EON_ready()
 	{
 		arrWord[380] =  10;
 	}
+}
+void ADC_measureVolt(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool) 
+	{
+	extern uint32_t adc_delay;
+	uint32_t n = 16;//16;
+	uint32_t s;
+//	uint32_t v100; // Временно напряжение 100 вольт
+//	float R = 20000.0;
+//	int ok = 1;
+//	float delta = 0.2;
+		uint16_t limit, delta;
+		uint8_t alarm1, alarm2;
+
+ 	
+		// Напряжение утечки 1
+		
+	ADC_set_config(0x0000); //0x1050) смещение внешнее REFin1+ REFin1- буфера нет канал 1
+	HAL_Delay(adc_delay);		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);			
+	ADC_set_mode(0x800a);  // calibrate full-scale
+	HAL_Delay(adc_delay);		
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
+	ADC_read(1, adc_delay); // buffer flush	
+	ADC_read(1, adc_delay); // buffer flush
+	s = ADC_read(n, adc_delay);
+	//++++++++++++++++++++++++++
+	if (s > _Voltconst ){s = s - _Voltconst;}
+	else {s = _Voltconst - s;}
+	s=s>>8;
+	
+	s=(s*100)/298;
+	
+		limit  = arrWord[200 + nCh];
+		delta = limit * 10;
+		limit = limit *100;
+		if (s > limit)
+		{alarm1 =1;}
+		else if (s <(limit - delta))
+		{alarm1 = 0;}
+	
+  
+
+	
+		// Напряжение утечки 2	
+
+	ADC_set_config(0x0001); //0x1051) смещение внешнее REFin1+ REFin1- буфера нет биполярный сигнал 
+	HAL_Delay(adc_delay);
+		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x800a);  // calibrate full-scale
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	
+	s=0;
+	s = ADC_read(n, adc_delay);
+	
+	if (s > _Voltconst ){s = s - _Voltconst;}
+	else {s = _Voltconst - s;}
+//	arrWord[nCh+200] = s;
+	s=s>>8;	
+	s=(s*100)/298;
+	
+		limit  = arrWord[200 + nCh];
+		delta = limit * 10;
+		limit = limit *100;
+		if (s > limit)
+		{alarm2 =1;}
+		else if (s <(limit - delta))
+		{alarm2 = 0;}	
+
+		arrBool[nCh +100] = alarm1 | alarm2;
+
+//	callibrateU[nCh] = s;
+////	arrWord[nCh+200] = s; //>>8;
+//	arrWord[nCh +201] = s>>8;
+	
+
+
+
+	if (arrBool[nCh + 20] & arrBool[nCh +30] & arrBool[nCh +40]&arrBool[nCh+50])
+	{ arrBool[nCh+60]=1; } // allarm
+
+
 }
