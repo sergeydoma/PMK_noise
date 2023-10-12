@@ -28,6 +28,8 @@
 /* USER CODE BEGIN TD */
 extern uint8_t arr[168];
 extern uint8_t mbInput[16]; // Массив входных данных modbus
+extern uint8_t c;
+extern uint8_t statusMb;
 int ii;
 int Nb;
 int NNb;
@@ -396,6 +398,8 @@ void TIM7_IRQHandler(void)
 //        if (Nb>2){NNb = Nb - 0x02;}
 //        else {NNb = 0;}
 //        mBus = 1;
+					statusMb = 1;
+					
                     if (lenMBrx <=2)
                         {lenMBrx=0;}
                     else
@@ -403,7 +407,7 @@ void TIM7_IRQHandler(void)
 
                     crcin = crc16((uint8_t*) arr, lenMBrx);
                     mcrc = byte_to_word(arr[lenMBrx],arr[lenMBrx+1]);
-
+										arr[0]= 0;
                     if (crcin == mcrc)
                     {
 //											arr[0]= 0xFF;

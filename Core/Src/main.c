@@ -90,7 +90,7 @@ int16_t blink; // для выбора режима упрвления миган
 		uint8_t modeEon;
 		uint8_t timeModeEon = 0;
 		_Bool startLokal = 0;
-		
+		uint8_t statusMb;
 //	uint16_t currentTime; // переменная для выдержки 30 сек не нажата ни одна кнопка
 GPIO switch_gpio[10] = {
 	{ BT1_GPIO_Port, BT1_Pin },
@@ -364,7 +364,7 @@ int main(void)
 	
 	for(int i = 0; i<10 ; i++)
 	{
-			if (arrWord[i+200]==0)
+			if ((arrWord[i+200]==0) | (arrWord[i+200] == 0xFFFF))
 			{arrWord[i+200]=_setVolt;}
 	}
 	arrWord[140]=0;
@@ -598,7 +598,7 @@ int main(void)
 					if(modeEon==2)
 					{startLokal = 1;}
 					
-					else if ((modeEon == 3)& (startLokal ==1))
+					else if ((modeEon == 3) & (startLokal ==1))
 					{	
 						timeModeEon = 1; 
 						startLokal = 0;
@@ -1597,7 +1597,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //					LED_Link(2);
 //					arrI2c_T[1]=0;
 //				}
-							if (arr[0]!= mbAddr)
+//							if (arr[0]!= mbAddr)
+				if (statusMb ==0)
 				{ 
 			
 				 if (lanTimer > 50000)
@@ -1612,6 +1613,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				}
 				else
 				{
+					statusMb = 0;
 					LED_Link(1);
 					arrI2c_T[1]=1;
 					lanTimer = 0;
@@ -1687,7 +1689,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 //							arrWord[111] = masterAddr[3]<<8	| masterAddr[4];
 								
 									
-							mbAddr = arrI2c_R[0]+ i2cAddr;
+							mbAddr = arrI2c_R[0]+ i2cAddr - 1;
 							modeEon = arrI2c_R[10];	
 								
 //							if((arrWord[140]&2)!=0)
