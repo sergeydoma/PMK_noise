@@ -170,7 +170,7 @@ typedef struct
 //#endif
 
 #ifndef _v100
-#define _v100				0x10000			// Сопротивление шлейфа
+#define _v100				20  //0x10000			// Напряжение смещения
 #endif
 
 #ifndef _Voltconst

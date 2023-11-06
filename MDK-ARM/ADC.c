@@ -778,7 +778,7 @@ void ADC_measureVolt(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool)
 	extern uint32_t adc_delay;
 	uint32_t n = 16;//16;
 	uint32_t s;
-	uint32_t v100; // Временно напряжение 100 вольт
+	float v100; // Временно напряжение 100 вольт
 	float R = 20000.0;
 	int ok = 1;
 	float delta = 0.2;
@@ -843,35 +843,46 @@ arrWordTemp[70 + nCh] = R; // измеренное значение
 //////////	//led_rgb[adc_current_chan] = 0x1f;
 		//*******************************************
 	// Проверка наличия 100 В
-//	v100 = 0;
-//			
-//	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
-//	HAL_Delay(adc_delay);
-//		
-//	ADC_set_mode(0x8009);  // calibrate zero
-//	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
-//		
-//	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
-//	HAL_Delay(adc_delay);
+	v100 = 0;
+			
+	ADC_set_config(0x0003); //0x1051) смещение Внутреннее - буфер канал 4
+	HAL_Delay(adc_delay);
+		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x800a);  // calibrate full-scale
+		
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
 
-//	//led_rgb[adc_current_chan] = 0x4f;
+	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
-//	HAL_Delay(adc_delay);
-//	if (v100 < _v100)
-//	{
-//		arrWord[140] 	= arrWord[140] | 0x2;
-//		arrWord[221 ] = arrWord[221] | 1 << nCh;
-//	}
-//	else
-//	{
-//		arrWord[140] &=  0xFD;
-//		arrWord[221] &= ~ (1<<nCh);
-//	}
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
+	HAL_Delay(adc_delay);
+	if (s <=  _constBipol)
+	{
+		s = _constBipol -s ;
+	}
+	else
+	{
+	 s = 0;
+	}
+	v100 = s/32897;
+	
+	
+	if (v100 < _v100)
+	{
+		arrWord[140] 	= arrWord[140] | 0x4;
+		arrWord[222 ] = arrWord[222] | 1 << nCh;
+	}
+	else
+	{
+		arrWord[140] &=  0xFB;
+		arrWord[222] &= ~ (1<<nCh);
+	}
 	
 // сопротивление изоляции 1
 	
@@ -1047,7 +1058,7 @@ arrWordTemp[70 + nCh] = R; // измеренное значение
 	extern uint32_t adc_delay;
 	uint32_t n = 16;//16;
 	uint32_t s;
-	uint32_t v100; // Временно напряжение 100 вольт
+	float v100; // Временно напряжение 100 вольт
 	float R = 20000.0;
 	int ok = 1;
 	float delta = 0.2;
@@ -1109,36 +1120,50 @@ arrWordTemp[70 + nCh] = R; // измеренное значение
 
 //////////	//led_rgb[adc_current_chan] = 0x1f;
 		//*******************************************
-//	// Проверка наличия 100 В
-//	v100 = 0;
-//			
-//	ADC_set_config(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
-//	HAL_Delay(adc_delay);
-//		
-//	ADC_set_mode(0x8009);  // calibrate zero
-//	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x800a);  // calibrate full-scale
-//		
-//	HAL_Delay(adc_delay);
-//	ADC_set_mode(0x0009);  // return to continuous reads
-//	HAL_Delay(adc_delay);
+	// Проверка наличия 100 В
+	v100 = 0;
+			
+	ADC_set_config(0x0003);  // биполярный смещение от IN1 без буфера ....(0x1093); //0x1051) смещение Внутреннее - буфер канал 4
+	HAL_Delay(adc_delay);
+		
+	ADC_set_mode(0x8009);  // calibrate zero
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x800a);  // calibrate full-scale
+		
+	HAL_Delay(adc_delay);
+	ADC_set_mode(0x0009);  // return to continuous reads
+	HAL_Delay(adc_delay);
 
-//	//led_rgb[adc_current_chan] = 0x4f;
+	//led_rgb[adc_current_chan] = 0x4f;
 
-//	ADC_read(1, adc_delay); // buffer flush
-//	ADC_read(1, adc_delay); // buffer flush
-//	v100 = ADC_read(n, adc_delay); // Измерение 100 В.
-//	HAL_Delay(adc_delay);
-//	if (v100 < _v100)
-//	{
-//		arrWord[140] 	= arrWord[140] | 0x2;
-//		arrWord[221 ] = arrWord[221] | 1 << nCh;
-//	}
-//	else
-//	{
-//		arrWord[140] &=  0xFD;
-//		arrWord[221] &= ~ (1<<nCh);
-//	}
+	ADC_read(1, adc_delay); // buffer flush
+	ADC_read(1, adc_delay); // buffer flush
+	
+	s = ADC_read(n, adc_delay); // Измерение 100 В.
+	
+	if (s >=  _constBipol)
+	{
+		s = s -_constBipol;
+	}
+	else
+	{
+	 s = 0;
+	}
+	v100 = s/32897;
+	
+
+	HAL_Delay(adc_delay);
+	
+	if (v100 < _v100)
+	{
+		arrWord[140] 	= arrWord[140] | 0x2;
+		arrWord[221 ] = arrWord[221] | 1 << nCh;
+	}
+	else
+	{
+		arrWord[140] &=  0xFD;
+		arrWord[221] &= ~ (1<<nCh);
+	}
 	
 // сопротивление изоляции 1
 	

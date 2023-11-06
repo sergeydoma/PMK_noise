@@ -375,7 +375,8 @@ int main(void)
 	}
 	arrWord[140]=0;
 	arrWord[380]=10;
-	arrWord[221] = 0xFC00;
+	arrWord[221] = 0xFC00; // Напряжение -100 В
+	arrWord[222] = 0xFC00; // напряжение +100 В
 	//ID CPU
 	__UniqueID[0] = UniqueID[0];
 	__UniqueID[1] = UniqueID[1];
@@ -674,8 +675,12 @@ int main(void)
 										arrWord[60+i] = arrWordBipol[60+i]; // сопротивление изоляции 2
 										arrBool[30+i] = arrBoolBipol[30+i]; // авария изоляции 2
 									}
+//									timeModeEon = 1; 
+									break;
+								case 10:
 									timeModeEon = 1; 
 									break;
+								
               	default:
               		break;
               }
@@ -1759,7 +1764,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 					arrI2c_T[8] = arrWord[114]>>8;
 					arrI2c_T[9] = arrWord[114];
 // Управление смещением 100 В
-					arrI2c_T[11] = 0xBB; //EON_off; // 1 когда напряжение должно быть снято
+//					arrI2c_T[11] = 0xBB; //EON_off; // 1 когда напряжение должно быть снято
 		 
 		 		 
 		 
@@ -1788,13 +1793,15 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 								{
 									arrWord[140] = arrWord[140]&1;
 								}
-//							if((arrWord[140]&2)!=0)
-//								
-//							{arrI2c_T[0]=1;}
-//							else
-//								{arrI2c_T[0]=0;}
 								
-								arrI2c_T[0] = EON_off;
+							if((arrWord[140]&2)|(arrWord[140]&4))
+								
+							{arrI2c_T[0]=1;}
+							
+							else
+								{arrI2c_T[0]=0;}
+								
+//								arrI2c_T[0] = EON_off;
 								
 //							WTF = HAL_I2C_Slave_Transmit_DMA(&hi2c1,masterAddr,5); //arrI2c, 3);								
 //							for (int i=0; i<100; i++){}
