@@ -39,6 +39,9 @@
  _Bool arrBool[0x400]; 
 	_Bool arrBoolTemp[100]; 
 	uint16_t arrWord[0x400];
+	uint16_t arrWord_minus[0x400];
+	uint16_t arrWordBipol[0x400];
+	_Bool arrBoolBipol[0x400];
  _Bool uartTx;
   _Bool sem; // сигнал о том что посылка modbud принята без ошибок.
   _Bool blockMode; // блокировка записи по modbus в режиме местного упрвления
@@ -66,11 +69,12 @@ int16_t blink; // для выбора режима упрвления миган
 		_Bool slaveWrData;
 		_Bool slaveRdData;
 		 int iik;
-		uint8_t arrI2c_R[11];
+		uint8_t arrI2c_R[12];
 		
 		_Bool i2c_rd = 0;
 		_Bool i2c_td = 0;
 		uint32_t lanTimer = 0;
+		uint8_t hvAllarm = 0;
 		
 		uint8_t lanCurr;// чтетчик для индикации работы сети
 		_Bool lanLed; // индикатор работы сети ?
@@ -87,7 +91,7 @@ int16_t blink; // для выбора режима упрвления миган
 		uint8_t modeEon =0;
 		uint16_t delayEon = 900;
 		uint8_t readyEon;
-		uint8_t modeEon;
+//		uint8_t modeEon;
 		uint8_t timeModeEon = 0;
 		_Bool startLokal = 0;
 		uint8_t statusMb;
@@ -203,7 +207,7 @@ void HAL_I2C_SlaveTxCpltCallback(I2C_HandleTypeDef *hi2c)
 {
 			
 		slaveWrData = 0;
-							RTF = HAL_I2C_Slave_Receive_DMA(&hi2c1, arrI2c_R,11);						
+							RTF = HAL_I2C_Slave_Receive_DMA(&hi2c1, arrI2c_R,12);						
 							for (int i=0; i<100; i++){}
 							arrWord[110] = arrI2c_R[1]<<8	| arrI2c_R[2];
 							arrWord[111] = arrI2c_R[3]<<8	| arrI2c_R[4];
@@ -238,30 +242,30 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
 {
 //	if(huart->ErrorCode == HAL_UART_ERROR_ORE)
 //	{
-		if (huart->ErrorCode == HAL_UART_ERROR_NONE)
-		{
-			arrWord[200]=0;
-		}
-		else if (huart->ErrorCode == HAL_UART_ERROR_PE)
-		{
-			arrWord[200]=1;
-		}
-		else if (huart->ErrorCode == HAL_UART_ERROR_NE)
-		{
-			arrWord[200]=2;
-		}
-		else if (huart->ErrorCode == HAL_UART_ERROR_FE)
-		{
-			arrWord[200]=3;
-		}
-		else if (huart->ErrorCode == HAL_UART_ERROR_ORE)
-		{
-			arrWord[200]=4;
-		}
-		else if (huart->ErrorCode == HAL_UART_ERROR_DMA)
-		{
-			arrWord[200]=5;
-		}
+//		if (huart->ErrorCode == HAL_UART_ERROR_NONE)
+//		{
+//			arrWord[200]=0;
+//		}
+//		else if (huart->ErrorCode == HAL_UART_ERROR_PE)
+//		{
+//			arrWord[200]=1;
+//		}
+//		else if (huart->ErrorCode == HAL_UART_ERROR_NE)
+//		{
+//			arrWord[200]=2;
+//		}
+//		else if (huart->ErrorCode == HAL_UART_ERROR_FE)
+//		{
+//			arrWord[200]=3;
+//		}
+//		else if (huart->ErrorCode == HAL_UART_ERROR_ORE)
+//		{
+//			arrWord[200]=4;
+//		}
+//		else if (huart->ErrorCode == HAL_UART_ERROR_DMA)
+//		{
+//			arrWord[200]=5;
+//		}
 
 		HAL_UART_Receive_DMA(&huart2,(uint8_t*) &rer,1); // Перезапуск при ошибке
 }	
@@ -277,6 +281,8 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
   * @retval int
   */
 int main(void)
+
+
 {
   /* USER CODE BEGIN 1 */
 //	//ID CPU
@@ -361,7 +367,7 @@ int main(void)
   arrBool[30]=1; arrBool[31]=1; arrBool[32]=1;arrBool[33]=1;arrBool[34]=1; arrBool[35]=1; arrBool[36]=1; arrBool[37]=1; arrBool[38]=1; arrBool[39]=1;
 	arrBool[40]=1; arrBool[41]=1; arrBool[42]=1;arrBool[43]=1;arrBool[44]=1; arrBool[45]=1; arrBool[46]=1; arrBool[47]=1; arrBool[48]=1; arrBool[49]=1;
 	arrBool[50]=1; arrBool[51]=1; arrBool[52]=1;arrBool[53]=1;arrBool[54]=1; arrBool[55]=1; arrBool[56]=1; arrBool[57]=1; arrBool[58]=1; arrBool[59]=1;
-	
+	arrBool[110]=1; arrBool[111]=1; arrBool[112]=1;arrBool[113]=1;arrBool[114]=1; arrBool[115]=1; arrBool[116]=1; arrBool[117]=1; arrBool[118]=1; arrBool[119]=1;
 	for(int i = 0; i<10 ; i++)
 	{
 			if ((arrWord[i+200]==0) | (arrWord[i+200] == 0xFFFF))
@@ -500,7 +506,7 @@ int main(void)
 		
 		arrWord[220] = ADC_Error(0x4F);
 		
-		pmkError = arrWord[220]!= 0;//230721
+		pmkError = 0; // arrWord[220]!= 0;//230721
 		
 		if (pmkError)
 		{arrWord[140]=arrWord[140]|0x1;}
@@ -534,6 +540,7 @@ int main(void)
   while (1)
 	{
 //		HAL_IWDG_Refresh(&hiwdg);
+//		arrWord[145] = modeEon;
 		
 		for(adc_current=0; adc_current<11; adc_current++) 
 		{
@@ -571,17 +578,50 @@ int main(void)
 						}
 						else if ((arrWord[adc_current+40]==2)|(arrWord[adc_current+40]==6) )
 						{
-							if (modeEon == 3)
-							// if mode chanall == 2
-								{
-								ADC_measure(adc_current, arrWord, arrBool, startSett);
-								}	
-							else if
-								(modeEon == 1)
-								{
-									// вычисляем напряжения
-									ADC_measureVolt(adc_current,arrWord,arrBool);
-								}
+							
+							
+							{
+								switch (modeEon)
+              {
+              	case 0:									
+              		break;
+              	case 1:
+										ADC_measureVolt(adc_current,arrWord,arrBool);
+              		break;
+								case 2:										
+									break;
+								case 3:									
+									break;
+								case 4:
+										ADC_measure_minus(adc_current, arrWord,arrBoolTemp);
+									break;
+								case 5:									
+									break;
+								case 6:									
+								break;
+								case 7:										
+								break;
+								case 8:
+									ADC_measure_plus(adc_current, arrWord,arrBool,arrWordBipol, arrBoolBipol);
+									break;
+								case 9:
+									for(int i = 0; i<10;i++)
+									{
+										arrWord[70+1] = arrWordBipol[70+i]; // сопротивление шлейфа
+										arrBool[40+i] = arrBoolBipol[40+i]; // авария сопротивления шлейфа
+
+										arrWord[50+i] = arrWordBipol[50+i]; // сопротивление изоляции 1
+										arrBool[20+i] = arrBoolBipol[20+i]; // авария изоляции 1
+										
+										arrWord[60+i] = arrWordBipol[60+i]; // сопротивление изоляции 2
+										arrBool[30+i] = arrBoolBipol[30+i]; // авария изоляции 2
+									}
+									break;
+              	default:
+              		break;
+              }
+														
+							}
 						}
 						else if ((arrWord[adc_current+40]==1)|(arrWord[adc_current+40]==3)|(arrWord[adc_current+40]==4)|(arrWord[adc_current+40]==5) )
 						{
@@ -595,21 +635,67 @@ int main(void)
 				}
 				else  // идет процесс старта
 				{
-					if(modeEon==2)
-					{startLokal = 1;}
+					if (modeEon==1){startLokal=1;}
 					
-					else if ((modeEon == 3) & (startLokal ==1))
-					{	
-						timeModeEon = 1; 
-						startLokal = 0;
-						ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
-						
-					}
-					else if (modeEon == 1)
-					{ 
-					 // РЕЖИМ измерения напряжения и сравнения с порогом
-						ADC_measureVolt(adc_current,arrWord,arrBool);
-					}
+					if (startLokal ==1)
+					{
+					switch (modeEon)
+              {
+              	case 0:									
+              		break;
+              	case 1:
+										ADC_measureVolt(adc_current,arrWord,arrBoolTemp);
+              		break;
+								case 2:										
+									break;
+								case 3:									
+									break;
+								case 4:
+										ADC_measure_minus(adc_current, arrWord,arrBoolTemp);
+									break;
+								case 5:									
+									break;
+								case 6:									
+								break;
+								case 7:										
+								break;
+								case 8:
+									ADC_measure_plus(adc_current, arrWord,arrBool, arrWordBipol, arrBoolBipol);
+									break;
+								case 9:
+									for(int i = 0; i<10;i++)
+									{
+										arrWord[70+1] = arrWordBipol[70+i]; // сопротивление шлейфа
+										arrBool[40+i] = arrBoolBipol[40+i]; // авария сопротивления шлейфа
+
+										arrWord[50+i] = arrWordBipol[50+i]; // сопротивление изоляции 1
+										arrBool[20+i] = arrBoolBipol[20+i]; // авария изоляции 1
+										
+										arrWord[60+i] = arrWordBipol[60+i]; // сопротивление изоляции 2
+										arrBool[30+i] = arrBoolBipol[30+i]; // авария изоляции 2
+									}
+									timeModeEon = 1; 
+									break;
+              	default:
+              		break;
+              }
+						}
+					
+//					if(modeEon==2)
+//					{startLokal = 1;}
+//					
+//					else if ((modeEon == 3)) //& (startLokal ==1))
+//					{	
+//						timeModeEon = 1; 
+//						startLokal = 0;
+////						ADC_measure(adc_current, arrWord, arrBoolTemp, startSett);
+//						ADC_measure_minus(adc_current, arrWord, arrBoolTemp);
+//					}
+//					else if (modeEon == 1)
+//					{ 
+//					 // РЕЖИМ измерения напряжения и сравнения с порогом
+//						ADC_measureVolt(adc_current,arrWord,arrBool);
+//					}
 				}
 				ADC_CS(-1);
 			}
@@ -1527,6 +1613,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 // test git	
 // test git		 
 				//  Режимы работы ПМК 
+		 arrWord[145] = modeEon;
       if (PMU_Mode == 0)
       { 
         uartTx=0;      
@@ -1626,7 +1713,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 								{
 									if (startSett)
 									{
-											ch_monitor[i] = ModeCH(i,arrBool, arrWord);
+											ch_monitor[i] = ModeCH(i,arrBool, arrWord, adc_current);
 												if (arrWord[i+40]==0)
 														{set_set[i]=1;}
 														
@@ -1691,7 +1778,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 									
 							mbAddr = arrI2c_R[0]+ i2cAddr - 1;
 							modeEon = arrI2c_R[10];	
+							hvAllarm = arrI2c_R[11];
 								
+							if(hvAllarm)
+								{
+									arrWord[140] 	= arrWord[140] | 0x2;
+								}
+							else
+								{
+									arrWord[140] = arrWord[140]&1;
+								}
 //							if((arrWord[140]&2)!=0)
 //								
 //							{arrI2c_T[0]=1;}

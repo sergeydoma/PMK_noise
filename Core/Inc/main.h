@@ -134,8 +134,16 @@ typedef struct
 #define _Yellow					0x04FF0400		//0x008F0400  //0x004F0400     //Желтый цвет - 
 #endif
 
+#ifndef _YellowON
+#define _YellowON					0x00FF0000		//0x008F0400  //0x004F0400     //Желтый цвет - 
+#endif
+
 #ifndef _Green
 #define _Green 					0x0000FF00	 //0x00004F00		// Зеленый цвет
+#endif
+
+#ifndef _GreenON
+#define _GreenON 					0xA0A0FF00	 //0x00004F00		// Зеленый цвет
 #endif
 
 #ifndef _Red
@@ -166,12 +174,25 @@ typedef struct
 #endif
 
 #ifndef _Voltconst
-#define _Voltconst	   		0x7D0630 //0x7D0654 // 0x7D3736 //0x7D4505 // 0x7D751B//  смещение для биполярного измерения напряжения
+#define _Voltconst	   				0x7D0630 //0x7D0654 // 0x7D3736 //0x7D4505 // 0x7D751B//  смещение для биполярного измерения напряжения 8379896//
 #endif
 
 #ifndef _setVolt
 #define _setVolt					5				// уставка по умолчению для ошибки по напряжению утечки
 #endif
+
+#ifndef _constBipol
+#define _constBipol												0x800000 // 231020   8388815 // 0x7D0630 // 0x00694A1D //7634174 //5395843  //0x007EF21D // константа для 0 биполярного сгнала исп. для вычисления сопр. изоляции
+#endif
+
+#ifndef _constBipol_minus
+#define _constBipol_minus												8388846 // 0x7D0630 // 0x00694A1D //7634174 //5395843  //0x007EF21D // константа для 0 биполярного сгнала исп. для вычисления сопр. изоляции
+#endif
+
+#ifndef _constRiz
+#define _constRiz								69333 // значение при бесконечном сопротивлении
+#endif
+
 
 //#ifndef UID_BASE
 //#define UID_BASE 0x1FFFF7E8
@@ -271,7 +292,7 @@ _Bool DeltaBool(uint16_t delay);
 uint8_t timePush (uint16_t delayPush, uint8_t numChannel);
 _Bool timeNoPush (uint16_t delay, uint8_t numChannel);
  uint32_t Nblinck (uint16_t mode, uint32_t color, uint16_t period, uint8_t Ch);
-uint8_t ModeCH (uint8_t nCh, _Bool* Alarm, uint16_t* wordSet);
+uint8_t ModeCH (uint8_t nCh, _Bool* Alarm, uint16_t* wordSet, uint8_t adc_current);
  //++++++++++++++++++++++++++++++++++++++++++++++++++
  void Blink_LED(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
  void LED_Link(uint8_t val) ;
@@ -307,6 +328,9 @@ uint8_t EONmode(uint8_t nCh, _Bool EONoff, uint16_t delay);
 uint32_t Alarm_blinck (uint32_t color1, uint32_t color2, uint16_t period,uint8_t Ch);
 
 _Bool pause(uint16_t delta);
+
+void ADC_measure_plus(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool, uint16_t* arrWordTemp, _Bool* arrBoolTemp);
+void ADC_measure_minus(uint8_t nCh, uint16_t* arrWord, _Bool* arrBool);
 
 /* USER CODE END Private defines */
 

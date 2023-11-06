@@ -138,7 +138,7 @@ _Bool timeNoPush (uint16_t delay, uint8_t numChannel) //
   
               
   //*****************************************************************************
-uint8_t ModeCH (uint8_t nCh, _Bool* Alarm, uint16_t* wordSet) // wordSet массив типа arrWord
+uint8_t ModeCH (uint8_t nCh, _Bool* Alarm, uint16_t* wordSet, uint8_t adc_current) // wordSet массив типа arrWord
   {
 
 //	static uint8_t mode[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -230,6 +230,14 @@ uint8_t ModeCH (uint8_t nCh, _Bool* Alarm, uint16_t* wordSet) // wordSet мас�
 				else	
 				{
 				led_rgb[nCh] = _Green; //Nblinck( wordSet[nCh], _Green, 500); // 
+//				if (nCh == adc_current)
+//					{
+//						led_rgb[nCh] = _GreenON;
+//					}
+//					else
+//					{
+//						led_rgb[nCh] = _Green;
+//					}
 				}
 				out = 1;	 
     }
